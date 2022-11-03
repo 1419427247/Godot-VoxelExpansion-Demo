@@ -1,0 +1,17 @@
+0b7126e0c6e86d3ec295a72f5aa6e0bd
+::res://::1667450603
+export_presets.cfg::TextFile::-1::1667450541::0::1::::<><>::
+graphics_container.gd::GDScript::-1::1667443233::0::1::::<>VBoxContainer<>::
+icon.svg::CompressedTexture2D::4800537634988160490::1667438420::1667442197::1::::<><>::
+main.tscn::PackedScene::912297062411624604::1667450410::0::1::::<><>::uid://b6mhys2axr2ub<>uid://canofhoodc05k<>res://graphics_container.gd<>res://voxel_container.gd<>res://message.gd
+message.gd::GDScript::-1::1667443814::0::1::::<>Label<>::
+voxel_container.gd::GDScript::-1::1667448238::0::1::::<>VBoxContainer<>::
+::res://bin/::1667450110
+voxel.gdextension::NativeExtension::-1::1667450585::0::1::::<><>::
+::res://controller/::1667448577
+controller.gd::GDScript::-1::1667445133::0::1::::<>CharacterBody3D<>::
+controller.tscn::PackedScene::4587516234685362637::1667448577::0::1::::<><>::res://controller/controller.gd
+::res://output/::1667450547
+::res://packed_scene/::1667450410
+gd_chunk.gd::GDScript::-1::1667443504::0::1::::GDChunk<>Chunk<>::
+gd_chunk.tscn::PackedScene::2435696334867859813::1667450410::0::1::::<><>::res://packed_scene/gd_chunk.gd

@@ -1,0 +1,356 @@
+[gd_scene load_steps=30 format=3 uid="uid://m86ntvit8t7y"]
+
+[ext_resource type="PackedScene" uid="uid://b6mhys2axr2ub" path="res://controller/controller.tscn" id="1_ytgou"]
+[ext_resource type="Texture2D" uid="uid://canofhoodc05k" path="res://icon.svg" id="2_jru6y"]
+[ext_resource type="Script" path="res://graphics_container.gd" id="2_lidaq"]
+[ext_resource type="Script" path="res://voxel_container.gd" id="3_hkv2l"]
+[ext_resource type="Script" path="res://message.gd" id="5_apvnk"]
+
+[sub_resource type="GDScript" id="GDScript_dptx7"]
+script/source = "extends DirectionalLight3D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	rotate_x(deg_to_rad(0.5))
+"
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_36wp0"]
+
+[sub_resource type="Sky" id="Sky_6kjab"]
+sky_material = SubResource("ProceduralSkyMaterial_36wp0")
+
+[sub_resource type="Environment" id="Environment_ft6mv"]
+background_mode = 2
+sky = SubResource("Sky_6kjab")
+ambient_light_source = 3
+reflected_light_source = 2
+sdfgi_use_occlusion = true
+glow_enabled = true
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_6io5j"]
+auto_exposure_enabled = true
+
+[sub_resource type="VoxelContainerData" id="VoxelContainerData_lhtem"]
+container_size = Vector3i(32, 32, 32)
+
+[sub_resource type="BasicsPreset" id="BasicsPreset_65mig"]
+up = 2
+down = 2
+front = 1
+back = 1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_or7ds"]
+
+[sub_resource type="CustomMaterial" id="CustomMaterial_weti5"]
+shader_material = SubResource("ShaderMaterial_or7ds")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_sm70a"]
+noise_type = 3
+fractal_type = 3
+fractal_octaves = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_o2io5"]
+noise = SubResource("FastNoiseLite_sm70a")
+
+[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_c3yfl"]
+output_port_for_preview = 0
+texture = SubResource("NoiseTexture2D_o2io5")
+
+[sub_resource type="VisualShaderNodeColorOp" id="VisualShaderNodeColorOp_dnxnr"]
+output_port_for_preview = 0
+default_input_values = [0, Vector3(0, 0, 0), 1, Vector3(0.544, 0.3, 0)]
+operator = 1
+
+[sub_resource type="VisualShader" id="VisualShader_fv18u"]
+code = "shader_type spatial;
+uniform sampler2D tex_frg_2;
+
+
+
+void fragment() {
+// Texture2D:2
+	vec4 n_out2p0 = texture(tex_frg_2, UV);
+
+
+// ColorOp:3
+	vec3 n_in3p1 = vec3(0.54400, 0.30000, 0.00000);
+	vec3 n_out3p0 = abs(vec3(n_out2p0.xyz) - n_in3p1);
+
+
+// Output:0
+	ALBEDO = n_out3p0;
+
+
+}
+"
+graph_offset = Vector2(-394.111, -111.49)
+nodes/fragment/0/position = Vector2(400, 200)
+nodes/fragment/2/node = SubResource("VisualShaderNodeTexture_c3yfl")
+nodes/fragment/2/position = Vector2(-400, 120)
+nodes/fragment/3/node = SubResource("VisualShaderNodeColorOp_dnxnr")
+nodes/fragment/3/position = Vector2(-40, 160)
+nodes/fragment/connections = PackedInt32Array(2, 0, 3, 0, 3, 0, 0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4hmnm"]
+render_priority = 0
+shader = SubResource("VisualShader_fv18u")
+
+[sub_resource type="CustomMaterial" id="CustomMaterial_iqmxt"]
+shader_material = SubResource("ShaderMaterial_4hmnm")
+
+[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_f4773"]
+texture = ExtResource("2_jru6y")
+
+[sub_resource type="VisualShader" id="VisualShader_g84ap"]
+code = "shader_type spatial;
+uniform sampler2D tex_frg_2;
+
+
+
+void fragment() {
+// Texture2D:2
+	vec4 n_out2p0 = texture(tex_frg_2, UV);
+
+
+// Output:0
+	ALBEDO = vec3(n_out2p0.xyz);
+
+
+}
+"
+graph_offset = Vector2(-47.3945, 101.193)
+nodes/fragment/2/node = SubResource("VisualShaderNodeTexture_f4773")
+nodes/fragment/2/position = Vector2(140, 120)
+nodes/fragment/connections = PackedInt32Array(2, 0, 0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_oe81q"]
+render_priority = 0
+shader = SubResource("VisualShader_g84ap")
+
+[sub_resource type="CustomMaterial" id="CustomMaterial_kh4oc"]
+shader_material = SubResource("ShaderMaterial_oe81q")
+
+[sub_resource type="PrismMesh" id="PrismMesh_2ocdg"]
+
+[sub_resource type="MeshPreset" id="MeshPreset_5r3tp"]
+mesh = SubResource("PrismMesh_2ocdg")
+material = [1]
+
+[sub_resource type="PresetsData" id="PresetsData_jq1qg"]
+custom_materials = [SubResource("CustomMaterial_weti5"), SubResource("CustomMaterial_iqmxt"), SubResource("CustomMaterial_kh4oc")]
+basics_presets = [SubResource("BasicsPreset_65mig")]
+mesh_presets = [SubResource("MeshPreset_5r3tp")]
+
+[sub_resource type="LabelSettings" id="LabelSettings_lghti"]
+font_size = 24
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 59
+shadow_color = Color(0, 0, 0, 0.360784)
+
+[node name="Main" type="Node3D"]
+
+[node name="Controller" parent="." instance=ExtResource("1_ytgou")]
+transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 0, 0, -3.02955)
+flying = true
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.648389, 0)
+billboard = 1
+no_depth_test = true
+text = "Center"
+uppercase = true
+autowrap_mode = 2
+
+[node name="Marker3D" type="Marker3D" parent="Label3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.648389, 0)
+
+[node name="DirectionalLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 10, 0)
+script = SubResource("GDScript_dptx7")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ft6mv")
+camera_attributes = SubResource("CameraAttributesPractical_6io5j")
+
+[node name="VoxelRoom" type="VoxelRoom" parent="."]
+voxel_container_data = SubResource("VoxelContainerData_lhtem")
+presets_data = SubResource("PresetsData_jq1qg")
+
+[node name="Container" type="HBoxContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GraphicsContainer" type="VBoxContainer" parent="Container"]
+layout_mode = 2
+offset_right = 110.0
+offset_bottom = 331.0
+script = ExtResource("2_lidaq")
+
+[node name="ShadowCheck" type="CheckButton" parent="Container/GraphicsContainer"]
+layout_mode = 2
+offset_right = 110.0
+offset_bottom = 31.0
+focus_mode = 0
+text = "Shadow"
+
+[node name="SSRCheck" type="CheckButton" parent="Container/GraphicsContainer"]
+layout_mode = 2
+offset_top = 35.0
+offset_right = 110.0
+offset_bottom = 66.0
+focus_mode = 0
+text = "SSR"
+
+[node name="SSAOCheck" type="CheckButton" parent="Container/GraphicsContainer"]
+layout_mode = 2
+offset_top = 70.0
+offset_right = 110.0
+offset_bottom = 101.0
+focus_mode = 0
+text = "SSAO"
+
+[node name="GICheck" type="CheckButton" parent="Container/GraphicsContainer"]
+layout_mode = 2
+offset_top = 105.0
+offset_right = 110.0
+offset_bottom = 136.0
+focus_mode = 0
+text = "GI"
+
+[node name="FogCheck" type="CheckButton" parent="Container/GraphicsContainer"]
+layout_mode = 2
+offset_top = 140.0
+offset_right = 110.0
+offset_bottom = 171.0
+focus_mode = 0
+text = "FOG"
+
+[node name="VoxelContainer" type="VBoxContainer" parent="Container"]
+layout_mode = 2
+offset_left = 114.0
+offset_right = 298.0
+offset_bottom = 331.0
+grow_horizontal = 0
+script = ExtResource("3_hkv2l")
+
+[node name="BasicsVoxelCheckBox" type="CheckBox" parent="Container/VoxelContainer"]
+layout_mode = 2
+offset_right = 184.0
+offset_bottom = 31.0
+focus_mode = 0
+button_pressed = true
+text = "Basics voxel"
+alignment = 1
+icon_alignment = 1
+
+[node name="MeshVoxelCheckBox" type="CheckBox" parent="Container/VoxelContainer"]
+layout_mode = 2
+offset_top = 35.0
+offset_right = 184.0
+offset_bottom = 66.0
+focus_mode = 0
+button_pressed = true
+text = "Mesh voxel"
+alignment = 1
+icon_alignment = 1
+
+[node name="RandomRotationCheckBox" type="CheckBox" parent="Container/VoxelContainer"]
+layout_mode = 2
+offset_top = 70.0
+offset_right = 184.0
+offset_bottom = 101.0
+focus_mode = 0
+text = "Random angle"
+alignment = 1
+icon_alignment = 1
+
+[node name="Opportunity" type="HSlider" parent="Container/VoxelContainer"]
+layout_mode = 2
+offset_top = 105.0
+offset_right = 184.0
+offset_bottom = 121.0
+focus_mode = 0
+value = 50.0
+rounded = true
+ticks_on_borders = true
+
+[node name="RandomPlaceVoxelsButton" type="Button" parent="Container/VoxelContainer"]
+layout_mode = 2
+offset_top = 125.0
+offset_right = 184.0
+offset_bottom = 156.0
+focus_mode = 0
+text = "Randomly place voxels"
+
+[node name="ClearAllVoxelsButton" type="Button" parent="Container/VoxelContainer"]
+layout_mode = 2
+offset_top = 160.0
+offset_right = 184.0
+offset_bottom = 191.0
+focus_mode = 0
+text = "Clear all voxels"
+
+[node name="BuildMeshButton" type="Button" parent="Container/VoxelContainer"]
+layout_mode = 2
+offset_top = 195.0
+offset_right = 184.0
+offset_bottom = 226.0
+focus_mode = 0
+text = "Build Mesh"
+
+[node name="ClearMeshButton" type="Button" parent="Container/VoxelContainer"]
+layout_mode = 2
+offset_top = 230.0
+offset_right = 184.0
+offset_bottom = 261.0
+focus_mode = 0
+text = "Clear Mesh"
+
+[node name="BuildColliderButton" type="Button" parent="Container/VoxelContainer"]
+layout_mode = 2
+offset_top = 265.0
+offset_right = 184.0
+offset_bottom = 296.0
+focus_mode = 0
+text = "Build Collider
+"
+
+[node name="ClearColliderButton" type="Button" parent="Container/VoxelContainer"]
+layout_mode = 2
+offset_top = 300.0
+offset_right = 184.0
+offset_bottom = 331.0
+focus_mode = 0
+text = "Clear Collider"
+
+[node name="Message" type="Label" parent="Container"]
+layout_mode = 2
+offset_left = 302.0
+offset_top = 148.0
+offset_right = 303.0
+offset_bottom = 182.0
+grow_horizontal = 2
+grow_vertical = 2
+label_settings = SubResource("LabelSettings_lghti")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("5_apvnk")
+
+[connection signal="toggled" from="Container/GraphicsContainer/ShadowCheck" to="Container/GraphicsContainer" method="_on_shadow_check_toggled"]
+[connection signal="toggled" from="Container/GraphicsContainer/SSRCheck" to="Container/GraphicsContainer" method="_on_ssr_check_toggled"]
+[connection signal="toggled" from="Container/GraphicsContainer/SSAOCheck" to="Container/GraphicsContainer" method="_on_ssao_check_toggled"]
+[connection signal="toggled" from="Container/GraphicsContainer/GICheck" to="Container/GraphicsContainer" method="_on_gi_check_toggled"]
+[connection signal="toggled" from="Container/GraphicsContainer/FogCheck" to="Container/GraphicsContainer" method="_on_fog_check_toggled"]
+[connection signal="pressed" from="Container/VoxelContainer/RandomPlaceVoxelsButton" to="Container/VoxelContainer" method="_on_random_place_voxels_button_pressed"]
+[connection signal="pressed" from="Container/VoxelContainer/ClearAllVoxelsButton" to="Container/VoxelContainer" method="_on_clear_all_voxels_button_pressed"]
+[connection signal="pressed" from="Container/VoxelContainer/BuildMeshButton" to="Container/VoxelContainer" method="_on_build_mesh_button_pressed"]
+[connection signal="pressed" from="Container/VoxelContainer/ClearMeshButton" to="Container/VoxelContainer" method="_on_clear_mesh_button_pressed"]
+[connection signal="pressed" from="Container/VoxelContainer/BuildColliderButton" to="Container/VoxelContainer" method="_on_build_collider_button_pressed"]
+[connection signal="pressed" from="Container/VoxelContainer/ClearColliderButton" to="Container/VoxelContainer" method="_on_clear_collider_button_pressed"]
